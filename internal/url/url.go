@@ -49,7 +49,7 @@ func BBaas(urls, scopes, source []string) ([]string, []string, bool) {
 		"hackerone.com":     hackerone.Scrape,
 		"bugcrowd.com":      bugcrowd.Scrape,
 		"hackenproof.com":   hackenproof.Scrape,
-		"intigriti.com":     intigriti.Scrape,
+		"app.intigriti.com": intigriti.Scrape,
 		"openbugbounty.org": openbugbounty.Scrape,
 		"yeswehack.com":     yeswehack.Scrape,
 		"bugbounty.jp":      bugbountyjp.Scrape,
@@ -79,7 +79,7 @@ func getBBinScope(s string) [][]string {
 
 // getBBmatch returns slice containing submatches from expression that checks for valid URIs
 func getBBmatch(s string) []string {
-	re := regexp.MustCompile(`((https?:\/\/)?(www\.)?(hackerone\.com|bugcrowd\.com|hackenproof\.com|intigriti\.com\/([\w-_\/]+)|openbugbounty\.org|yeswehack\.com|bugbounty\.jp|(one\.)?federacy\.com)(\/[\w-_]+)?\/[\w-_]+)\/?`)
+	re := regexp.MustCompile(`((https?:\/\/)?(www\.)?(hackerone\.com|bugcrowd\.com|hackenproof\.com|app\.intigriti\.com|openbugbounty\.org|yeswehack\.com|bugbounty\.jp|(one\.)?federacy\.com)[\w/_-]+)`)
 	var match []string
 
 	if re.MatchString(s) {
