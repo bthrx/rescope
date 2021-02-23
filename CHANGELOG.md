@@ -7,6 +7,8 @@ Unreleased changes will go in the below heading.
 
 ### Fixed
 - Fixed package that was conflicting with errors interface introduced in golang 1.13. This led to unexpected panics when using the `-u|--url` flags to obtain scopes from bugbounty programs.
+- Parsing from Bugcrowd should now work with new site layout
+- Fixed out of bounds error when removing third party resources from scope
 
 ### Improvements
 - Migrated vendoring to Go Modules
