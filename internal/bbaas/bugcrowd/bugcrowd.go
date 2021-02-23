@@ -8,6 +8,7 @@
 package bugcrowd
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -23,7 +24,7 @@ func Scrape(url string) string {
 	match := re.FindStringSubmatch(url)
 	program := match[2]
 	endpoint := "https://bugcrowd.com/" + program
-	var includes, excludes, scope []string
+	var scope []string
 
 	// GET request to endpoint
 	resp, status := req.GET(endpoint)
@@ -37,40 +38,36 @@ func Scrape(url string) string {
 	doc, _ := htmlquery.Parse(strings.NewReader(resp))
 
 	// xQuery to grab in-scope and out-of-scope tables
-	inScope := htmlquery.Find(doc, "//h4[contains(text(), 'In scope')]/following-sibling::div//code")
-	outScope := htmlquery.Find(doc, "//h4[contains(text(), 'Out of scope')]/following-sibling::div//code")
+	blob := htmlquery.Find(doc, "//div[@data-react-class='ResearcherTargetGroups']")
 
-	// get in-scope / out-scope content
-	if inScope != nil {
-		includes = append(scope, "!INCLUDE")
-		for _, item := range inScope {
-			includes = append(includes, htmlquery.InnerText(item))
+	for _, item := range blob {
+		s := fmt.Sprintf("a %s", item)
+		s = strings.Replace(s, "\\u003c", "<", -1)
+		s = strings.Replace(s, "\\u003e", ">", -1)
+
+		// remove unwanted tags from blob
+		re1 := regexp.MustCompile(`({"tags":\[(.*?)})`)
+		re2 := regexp.MustCompile(`(category":"other",(.*?)})`)
+		re3 := regexp.MustCompile(`("uri":null,"target":{"id"(.*?)})`)
+		s = re1.ReplaceAllString(s, "$2")
+		s = re2.ReplaceAllString(s, "$2")
+		s = re3.ReplaceAllString(s, "$3")
+
+		re4 := regexp.MustCompile(`"in_scope":true(.*)`)
+		re5 := regexp.MustCompile(`"(in_scope":false(.*))`)
+		inscope := re4.FindAllString(s, -1)
+		outscope := re5.FindAllString(s, -1)
+
+		scope = append(scope, "!INCLUDE")
+		for _, item := range inscope {
+			item = re5.ReplaceAllString(item, "$3") //remove out-of-scope items
+			scope = append(scope, item)
 		}
-		if outScope != nil {
-			excludes = append(scope, "!EXCLUDE")
-			for _, item := range outScope {
-				excludes = append(excludes, htmlquery.InnerText(item))
-			}
+
+		scope = append(scope, "!EXCLUDE")
+		for _, item := range outscope {
+			scope = append(scope, item)
 		}
-	} else {
-		errors.NoScope(url)
-	}
-
-	// remove duplicates as inScope contains outScope as well
-	for i, v := range includes {
-		for _, v2 := range excludes {
-			if v == v2 {
-				includes[i] = ""
-			}
-		}
-	}
-
-	for _, v := range includes {
-		scope = append(scope, v)
-	}
-
-	for _, v := range excludes {
-		scope = append(scope, v)
 	}
 
 	return strings.Join(scope, "\n")
