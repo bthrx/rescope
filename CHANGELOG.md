@@ -9,7 +9,7 @@ Unreleased changes will go in the below heading.
 - Fixed package that was conflicting with errors interface introduced in golang 1.13. This led to unexpected panics when using the `-u|--url` flags to obtain scopes from bugbounty programs.
 - Parsing from Bugcrowd should now work with new site layout
 - Fixed out of bounds error when removing third party resources from scope
-- [#8](https://github.com/root4loot/rescope/issues/5) Fixed segault when parsing scopes from Intigriti due to layout change
+- [#8](https://github.com/root4loot/rescope/issues/5) Fixed segault when parsing scopes from Intigriti due to layout change. Ref a26631c
 
 ### Improvements
 - Migrated vendoring to Go Modules
