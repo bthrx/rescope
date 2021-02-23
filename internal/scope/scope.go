@@ -104,7 +104,6 @@ func Parse(m Match, scopes, source []string, silent bool, incTag, exTag string, 
 			// Single IP
 			if m4 != nil {
 				m.Counter++
-				printFound(m4[0], exclude, silent)
 				if exclude != true {
 					m.Includes = append(m.Includes, m4)
 				} else {
@@ -124,7 +123,6 @@ func Parse(m Match, scopes, source []string, silent bool, incTag, exTag string, 
 						log.Fatalf("\n%s Failed to parse IP/CIDR: %s", color.FgRed.Text("[!]"), arr)
 					} else {
 						m.Counter++
-						printFound(arr, exclude, silent)
 					}
 					if exclude != true {
 						m.Includes = append(m.Includes, hosts)
@@ -146,8 +144,6 @@ func Parse(m Match, scopes, source []string, silent bool, incTag, exTag string, 
 						log.Fatalf("\n%s Failed to parse IP-range: %s", color.FgRed.Text("[!]"), arr[0])
 					} else {
 						m.Counter++
-						printFound(arr[0], exclude, silent)
-
 						if exclude != true {
 							m.Includes = append(m.Includes, hosts)
 						} else {
@@ -165,7 +161,6 @@ func Parse(m Match, scopes, source []string, silent bool, incTag, exTag string, 
 						continue
 					}
 					m.Counter++
-					printFound(arr[0], exclude, silent)
 					if exclude != true {
 						m.Includes = append(m.Includes, arr)
 					} else {
@@ -182,10 +177,25 @@ func Parse(m Match, scopes, source []string, silent bool, incTag, exTag string, 
 	}
 
 	for i := range scopes {
+		m.Includes = removeDuplicates(m.Includes)
+		m.Excludes = removeDuplicates(m.Excludes)
+		printFound(m.Includes, m.Excludes, silent)
 		m.Includes = checkAvoid(source[i], m.Includes, serviceAvoids)
 		m.Excludes = checkConflict(source[i], m.Includes, m.Excludes)
 	}
 	return m
+}
+
+func printFound(includes, excludes [][]string, silent bool) {
+	if !silent {
+		for _, include := range includes {
+			fmt.Println(color.FgGreen.Text(" +  " + include[0]))
+		}
+
+		for _, exclude := range excludes {
+			fmt.Println(color.FgRed.Text(" -  " + exclude[0]))
+		}
+	}
 }
 
 // getAnswer takes question and prompts user for y/n input
@@ -282,6 +292,25 @@ func checkConflict(source string, includes, excludes [][]string) [][]string {
 	return excludes
 }
 
+// remove duplicate targets
+func removeDuplicates(slices [][]string) [][]string {
+	var newslices [][]string
+	var duplicate bool
+	for _, slice := range slices {
+		duplicate = false
+		for _, newslice := range newslices {
+			if slice[0] == newslice[0] {
+				duplicate = true
+			}
+		}
+
+		if !duplicate {
+			newslices = append(newslices, slice)
+		}
+	}
+	return newslices
+}
+
 // remove a from b, if a is found and return b
 func remove(a [][]string, b [][]string) [][]string {
 	var c [][]string
@@ -295,19 +324,6 @@ func remove(a [][]string, b [][]string) [][]string {
 		}
 	}
 	return c
-}
-
-// prints item in color depending on whether it is part of include or exclude
-func printFound(item string, exclude bool, silent bool) {
-	if exclude == true {
-		if !silent {
-			fmt.Println(color.FgRed.Text(" -  " + item))
-		}
-	} else {
-		if !silent {
-			fmt.Println(color.FgGreen.Text(" +  " + item))
-		}
-	}
 }
 
 // hostsFromRange takes a m2 slice containing IP-range substrings
