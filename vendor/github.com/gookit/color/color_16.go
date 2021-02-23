@@ -2,16 +2,49 @@ package color
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Color Color16, 16 color value type
 // 3(2^3=8) OR 4(2^4=16) bite color.
 type Color uint8
 
+// Opts basic color options. code: 0 - 9
+type Opts []Color
+
+// Add option value
+func (o *Opts) Add(ops ...Color) {
+	for _, op := range ops {
+		if uint8(op) < 10 {
+			*o = append(*o, op)
+		}
+	}
+}
+
+// IsValid options
+func (o Opts) IsValid() bool {
+	return len(o) > 0
+}
+
+// IsEmpty options
+func (o Opts) IsEmpty() bool {
+	return len(o) == 0
+}
+
+// String options to string. eg: "1;3"
+func (o Opts) String() string {
+	return Colors2code(o...)
+}
+
 /*************************************************************
  * Basic 16 color definition
  *************************************************************/
+
+// Base value for foreground/background color
+const (
+	FgBase uint8 = 30
+	BgBase uint8 = 40
+)
 
 // Foreground colors. basic foreground colors 30 - 37
 const (
@@ -57,7 +90,7 @@ const (
 
 // Extra background color 100 - 107(非标准)
 const (
-	BgDarkGray Color = iota + 99
+	BgDarkGray Color = iota + 100
 	BgLightRed
 	BgLightGreen
 	BgLightYellow
@@ -94,10 +127,14 @@ const (
 	White   = FgWhite
 	Yellow  = FgYellow
 	Magenta = FgMagenta
+
 	// special
+
 	Bold   = OpBold
 	Normal = FgDefault
+
 	// extra light
+
 	LightRed     = FgLightRed
 	LightCyan    = FgLightCyan
 	LightBlue    = FgLightBlue
@@ -106,6 +143,11 @@ const (
 	LightYellow  = FgLightYellow
 	LightMagenta = FgLightMagenta
 )
+
+// Bit4 an method for create Color
+func Bit4(code uint8) Color {
+	return Color(code)
+}
 
 /*************************************************************
  * Color render methods
@@ -117,11 +159,20 @@ func (c Color) Text(message string) string {
 }
 
 // Render messages by color setting
-// usage:
+// Usage:
 // 		green := color.FgGreen.Render
 // 		fmt.Println(green("message"))
 func (c Color) Render(a ...interface{}) string {
 	return RenderCode(c.String(), a...)
+}
+
+// Renderln messages by color setting.
+// like Println, will add spaces for each argument
+// Usage:
+// 		green := color.FgGreen.Renderln
+// 		fmt.Println(green("message"))
+func (c Color) Renderln(a ...interface{}) string {
+	return RenderWithSpaces(c.String(), a...)
 }
 
 // Sprint render messages by color setting. is alias of the Render()
@@ -144,30 +195,25 @@ func (c Color) Sprintf(format string, args ...interface{}) string {
 // 		green := color.FgGreen.Print
 // 		green("message")
 func (c Color) Print(args ...interface{}) {
-	message := fmt.Sprint(args...)
-	if isLikeInCmd {
-		winPrint(message, c)
-	} else {
-		fmt.Print(RenderString(c.String(), message))
-	}
+	doPrintV2(c.Code(), fmt.Sprint(args...))
 }
 
 // Printf format and print messages.
-// usage:
+// Usage:
 // 		color.Cyan.Printf("string %s", "arg0")
 func (c Color) Printf(format string, a ...interface{}) {
-	msg := fmt.Sprintf(format, a...)
-	if isLikeInCmd {
-		winPrint(msg, c)
-	} else {
-		fmt.Print(RenderString(c.String(), msg))
-	}
+	doPrintV2(c.Code(), fmt.Sprintf(format, a...))
+}
+
+// Println messages with new line
+func (c Color) Println(a ...interface{}) {
+	doPrintlnV2(c.String(), a)
 }
 
 // Light current color. eg: 36(FgCyan) -> 96(FgLightCyan).
 // Usage:
-//	lightCyan := Cyan.Light()
-//	lightCyan.Print("message")
+// 	lightCyan := Cyan.Light()
+// 	lightCyan.Print("message")
 func (c Color) Light() Color {
 	val := int(c)
 	if val >= 30 && val <= 47 {
@@ -180,8 +226,8 @@ func (c Color) Light() Color {
 
 // Darken current color. eg. 96(FgLightCyan) -> 36(FgCyan)
 // Usage:
-//	cyan := LightCyan.Darken()
-//	cyan.Print("message")
+// 	cyan := LightCyan.Darken()
+// 	cyan.Print("message")
 func (c Color) Darken() Color {
 	val := int(c)
 	if val >= 90 && val <= 107 {
@@ -192,9 +238,16 @@ func (c Color) Darken() Color {
 	return c
 }
 
-// String to code string. eg "35"
+// Code convert to code string. eg "35"
+func (c Color) Code() string {
+	// return fmt.Sprintf("%d", c)
+	return strconv.Itoa(int(c))
+}
+
+// String convert to code string. eg "35"
 func (c Color) String() string {
-	return fmt.Sprintf("%d", c)
+	// return fmt.Sprintf("%d", c)
+	return strconv.Itoa(int(c))
 }
 
 // IsValid color value
@@ -257,7 +310,12 @@ var ExBgColors = map[string]Color{
 }
 
 // Options color options map
-var Options = map[string]Color{
+// Deprecated
+// NOTICE: please use AllOptions instead.
+var Options = AllOptions
+
+// AllOptions color options map
+var AllOptions = map[string]Color{
 	"reset":      OpReset,
 	"bold":       OpBold,
 	"fuzzy":      OpFuzzy,
@@ -266,31 +324,4 @@ var Options = map[string]Color{
 	"blink":      OpBlink,
 	"reverse":    OpReverse,
 	"concealed":  OpConcealed,
-}
-
-/*************************************************************
- * helper methods
- *************************************************************/
-
-// convert colors to code. return like "32;45;3"
-func colors2code(colors ...Color) string {
-	if len(colors) == 0 {
-		return ""
-	}
-
-	var codes []string
-	for _, color := range colors {
-		codes = append(codes, color.String())
-	}
-
-	return strings.Join(codes, ";")
-}
-
-// Println messages with new line
-func (c Color) Println(a ...interface{}) {
-	if isLikeInCmd {
-		winPrintln(fmt.Sprint(a...), c)
-	} else {
-		fmt.Println(RenderCode(c.String(), a...))
-	}
 }

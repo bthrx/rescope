@@ -1,23 +1,26 @@
-# github.com/akamensky/argparse v0.0.0-20190309155458-28b0496b54cb
+# github.com/akamensky/argparse v1.2.2
 ## explicit
 github.com/akamensky/argparse
-# github.com/antchfx/htmlquery v1.0.0
+# github.com/antchfx/htmlquery v1.2.3
 ## explicit
 github.com/antchfx/htmlquery
-# github.com/antchfx/xpath v1.0.0
+# github.com/antchfx/xpath v1.1.11
 ## explicit
 github.com/antchfx/xpath
-# github.com/gookit/color v1.1.6
+# github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e
+github.com/golang/groupcache/lru
+# github.com/gookit/color v1.3.7
 ## explicit
 github.com/gookit/color
 # github.com/stretchr/testify v1.7.0
 ## explicit
-# golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3
+# golang.org/x/net v0.0.0-20210222171744-9060382bd457
 ## explicit
 golang.org/x/net/html
 golang.org/x/net/html/atom
 golang.org/x/net/html/charset
-# golang.org/x/text v0.3.0
+# golang.org/x/text v0.3.5
+## explicit
 golang.org/x/text/encoding
 golang.org/x/text/encoding/charmap
 golang.org/x/text/encoding/htmlindex
@@ -28,6 +31,8 @@ golang.org/x/text/encoding/korean
 golang.org/x/text/encoding/simplifiedchinese
 golang.org/x/text/encoding/traditionalchinese
 golang.org/x/text/encoding/unicode
+golang.org/x/text/internal/language
+golang.org/x/text/internal/language/compact
 golang.org/x/text/internal/tag
 golang.org/x/text/internal/utf8internal
 golang.org/x/text/language
