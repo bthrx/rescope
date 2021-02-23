@@ -57,6 +57,7 @@ func Parse(m Match, scopes, source []string, silent bool, incTag, exTag string, 
 	}
 
 	r1 := regexp.MustCompile(`([a-z3]+:\/\/)?([a-z]+\.)?(\*\.)?(\*?[a-zA-Z0-9-.*]+(\.[a-z]+|\.\*))(:\d+)?([A-Za-z0-9-._~:/?#@!$&'*+=]+)?`)
+
 	// Groups: 1.  [ftp]://sub.example.com:25/d/foo.bar    		// scheme
 	//         2.   ftp://[sub].example.com:25/d/foo.bar        // first subdomain
 	//         3.   ftp://[*.]example.com:25/d/foo.bar     		// wildcarded subdomain
@@ -283,19 +284,17 @@ func checkConflict(source string, includes, excludes [][]string) [][]string {
 
 // remove a from b, if a is found and return b
 func remove(a [][]string, b [][]string) [][]string {
+	var c [][]string
 	for _, av := range a {
-		for i, bv := range b {
+		for _, bv := range b {
 			if av[4] == bv[4] {
-				if len(b) == i {
-					// when last index
-					b = append(b[:i], b[i:]...)
-				} else {
-					b = append(b[:i], b[i+1:]...)
-				}
+				continue
+			} else {
+				c = append(c, bv)
 			}
 		}
 	}
-	return b
+	return c
 }
 
 // prints item in color depending on whether it is part of include or exclude
