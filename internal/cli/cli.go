@@ -44,7 +44,7 @@ func ArgParse() Args {
  | '__/ _ \/ __|/ __/ _ \| '_ \ / _ \
  | | |  __/\__ \ (_| (_) | |_) |  __/
  |_|  \___||___/\___\___/| .__/ \___|
-  @ r o o t 4 l o o t    |_|     v2.1 
+  @ r o o t 4 l o o t    |_|     v2.5 
      
 Example Usage:
   rescope --burp -u hackerone.com/security -o burpscope.json  
