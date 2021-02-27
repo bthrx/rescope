@@ -180,6 +180,7 @@ func Parse(m Match, scopes, source []string, silent bool, incTag, exTag string, 
 		}
 
 		m.Excludes = checkConflict(source[i], m.Includes, m.Excludes, resolveConflicts)
+		m.Includes = checkAvoid(source[i], m.Includes, serviceAvoids, avoid3P)
 	}
 	return m
 }
@@ -223,7 +224,7 @@ func isIP(s string) bool {
 
 // checkAvoid attempts to identify identifiers in scope that should be avoided based on config
 // returns a modified list of includes depending on user input
-func checkAvoid(source string, includes [][]string, services []string) [][]string {
+func checkAvoid(source string, includes [][]string, services []string, avoid3P bool) [][]string {
 	var targetAvoids [][]string
 	domain := regexp.MustCompile(`\/(\w+\/?$)`)
 	found := false
@@ -251,11 +252,19 @@ func checkAvoid(source string, includes [][]string, services []string) [][]strin
 		}
 	}
 	if found == true {
-		answer := getAnswer("Avoid?")
+		var answer string
+		if !avoid3P {
+			answer := getAnswer("Avoid?")
+			_ = answer
+		} else {
+			answer = "Y"
+		}
+
 		if answer == "Y" || answer == "" {
 			includes = remove(targetAvoids, includes)
 		}
 	}
+	fmt.Println("")
 	return includes
 }
 
@@ -285,7 +294,7 @@ func checkConflict(source string, includes, excludes [][]string, resolveConflict
 	if found == true {
 		var answer string
 		if !resolveConflicts {
-		answer := getAnswer("Remove now?")
+			answer := getAnswer("Remove now?")
 			_ = answer
 		} else {
 			answer = "Y"

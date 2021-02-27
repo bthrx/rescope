@@ -85,6 +85,7 @@ usage: rescope [arguments]
 |       | --itag     	     | Custom include tag (default: !INCLUDE) 			 | Optional 	|
 |       | --etag     	     | Custom exclude tag (default: !EXCLUDE) 			 | Optional     |
 |       | --resolveConflicts | Resolve all exclude conflicts (Say 'Y' to all)    | Optional     |
+|       | --avoid3P          | Avoid all third party resources (Say 'Y' to all)  | Optional     |
 |       | --version          | Print version                 					 | Optional     |
 
 

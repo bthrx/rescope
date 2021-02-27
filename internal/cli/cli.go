@@ -34,6 +34,7 @@ type Args struct {
 	IncTag     string
 	ExTag      string
 	ResolveAll bool
+	Avoid3P    bool
 }
 
 // ArgParse and check arguments etc
@@ -75,6 +76,7 @@ Documentation:
 	s := parser.Flag("s", "silent", &argparse.Options{Help: "Do not print identified targets"})
 	r := parser.Flag("r", "raw", &argparse.Options{Help: "Output raw in-scope definitions to outfile"})
 	res := parser.Flag("", "resolveConflicts", &argparse.Options{Help: "Resolve all exclude conflicts (Say 'Y' to all)"})
+	avoid3P := parser.Flag("", "avoid3P", &argparse.Options{Help: "Avoid all third party resources (Say 'Y' to all)"})
 	ver := parser.Flag("", "version", &argparse.Options{Help: "Display version"})
 
 	_ = parser.Parse(os.Args)
@@ -90,6 +92,7 @@ Documentation:
 	a.IncTag = *in
 	a.ExTag = *ex
 	a.ResolveAll = *res
+	a.Avoid3P = *avoid3P
 	a.version = *ver
 
 	// remove timestamp from exits
