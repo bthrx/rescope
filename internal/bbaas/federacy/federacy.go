@@ -2,7 +2,7 @@
 // Written By : Daniel Antonsen (@root4loot)
 //
 // Distributed Under MIT License
-// Copyrights (C) 2019 root4loot
+// Copyrights (C) 2021 root4loot
 //
 
 package federacy
@@ -13,8 +13,8 @@ import (
 	"strings"
 
 	color "github.com/gookit/color"
-	req "github.com/root4loot/rescope/internal/bbaas/pkg/request"
 	errors "github.com/root4loot/rescope/internal/bbaas/pkg/errors"
+	req "github.com/root4loot/rescope/internal/bbaas/pkg/request"
 )
 
 var include, exclude, scope []string
