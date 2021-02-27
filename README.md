@@ -71,20 +71,21 @@ usage: rescope [arguments]
 
 ### Arguments
 
-| Short | Long       	| Description                   					| Required     |
-| :----: |:------------:| :------------------------------------------------ | :--------    |
-| -h    | --help     	| Print help information        					| Optional     |
-| -b    | --burp     	| Parse to Burp Suite JSON      					| Required?    |
-| -z    | --zap      	| Parse to OWASP ZAP XML        					| Required?    |
-| -r    | --raw      	| Output raw in-scope definitions to outfile        | Required?    |
-| -u    | --url      	| Public bug bounty program URL 					| Required     |
-| -i    | --infile   	| File (scope) to be parsed     					| Required     |
-| -o    | --outfile  	| File to write parsed results  					| Required     |
-| -s    | --silent   	| Do not print identified targets 					| Optional     |
-| -n    | --name     	| Name of ZAP context           					| Optional     |
-|       | --itag     	| Custom include tag (default: !INCLUDE) 			| Optional 	   |
-|       | --etag     	| Custom exclude tag (default: !EXCLUDE) 			| Optional     |
-|       | --version     | Print version                 					| Optional     |
+| Short | Long       	     | Description                   					 | Required     |
+| :---: |:------------------:| :------------------------------------------------ | :----------- |
+| -h    | --help     	     | Print help information        					 | Optional     |
+| -b    | --burp     	     | Parse to Burp Suite JSON      					 | Required?    |
+| -z    | --zap      	     | Parse to OWASP ZAP XML        					 | Required?    |
+| -r    | --raw      	     | Output raw in-scope definitions to outfile        | Required?    |
+| -u    | --url      	     | Public bug bounty program URL 					 | Required     |
+| -i    | --infile   	     | File (scope) to be parsed     					 | Required     |
+| -o    | --outfile  	     | File to write parsed results  					 | Required     |
+| -s    | --silent   	     | Do not print identified targets 					 | Optional     |
+| -n    | --name     	     | Name of ZAP context           					 | Optional     |
+|       | --itag     	     | Custom include tag (default: !INCLUDE) 			 | Optional 	|
+|       | --etag     	     | Custom exclude tag (default: !EXCLUDE) 			 | Optional     |
+|       | --resolveConflicts | Resolve all exclude conflicts (Say 'Y' to all)    | Optional     |
+|       | --version          | Print version                 					 | Optional     |
 
 
 ### Example Usage

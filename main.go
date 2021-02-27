@@ -81,7 +81,7 @@ func main() {
 
 	// Identify scope targets
 	m := scope.Match{}
-	m = scope.Parse(m, scopes, source, a.Silent, a.IncTag, a.ExTag, bbaas)
+	m = scope.Parse(m, scopes, source, a.Silent, a.IncTag, a.ExTag, a.ResolveAll, a.Avoid3P, bbaas)
 	if m.Counter == 0 {
 		log.Fatalf("%s Quitting", color.FgRed.Text("[!]"))
 	}

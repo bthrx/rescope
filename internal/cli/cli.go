@@ -20,19 +20,20 @@ import (
 
 // Args flags
 type Args struct {
-	Command   string
-	Infiles   []string
-	URLs      []string
-	Outfile   string
-	Burp      bool
-	Zap       bool
-	Raw       bool
-	Silent    bool
-	Scopename string
-	verbose   string
-	version   bool
-	IncTag    string
-	ExTag     string
+	Command    string
+	Infiles    []string
+	URLs       []string
+	Outfile    string
+	Burp       bool
+	Zap        bool
+	Raw        bool
+	Silent     bool
+	Scopename  string
+	verbose    string
+	version    bool
+	IncTag     string
+	ExTag      string
+	ResolveAll bool
 }
 
 // ArgParse and check arguments etc
@@ -73,6 +74,7 @@ Documentation:
 	in := parser.String("", "etag", &argparse.Options{Help: "Custom exclude tag (default: !EXCLUDE)"})
 	s := parser.Flag("s", "silent", &argparse.Options{Help: "Do not print identified targets"})
 	r := parser.Flag("r", "raw", &argparse.Options{Help: "Output raw in-scope definitions to outfile"})
+	res := parser.Flag("", "resolveConflicts", &argparse.Options{Help: "Resolve all exclude conflicts (Say 'Y' to all)"})
 	ver := parser.Flag("", "version", &argparse.Options{Help: "Display version"})
 
 	_ = parser.Parse(os.Args)
@@ -87,6 +89,7 @@ Documentation:
 	a.Silent = *s
 	a.IncTag = *in
 	a.ExTag = *ex
+	a.ResolveAll = *res
 	a.version = *ver
 
 	// remove timestamp from exits

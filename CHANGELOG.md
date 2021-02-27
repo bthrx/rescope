@@ -5,6 +5,8 @@ Unreleased changes will go in the below heading.
 
 ## [Unreleased]
 
+### Added
+- New flag `--resolveConflicts` (Resolve all exclude conflicts (Say 'Y' to all)
 ### Fixed
 - Fixed package that was conflicting with errors interface introduced in golang 1.13. This led to unexpected panics when using the `-u|--url` flags to obtain scopes from bugbounty programs.
 - Parsing from Bugcrowd should now work with new site layout

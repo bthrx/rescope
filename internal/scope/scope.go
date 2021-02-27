@@ -32,7 +32,7 @@ type Match struct {
 // applies regex to each line in order to extract targets from scope-
 // matched targets are split into groups varying on type (host, url, iprange, etc)
 // Returns a Match object
-func Parse(m Match, scopes, source []string, silent bool, incTag, exTag string, bbaas bool) Match {
+func Parse(m Match, scopes, source []string, silent bool, incTag, exTag string, resolveConflicts, avoid3P, bbaas bool) Match {
 	var exclude bool
 	var serviceAvoids []string
 
@@ -179,8 +179,7 @@ func Parse(m Match, scopes, source []string, silent bool, incTag, exTag string, 
 			fmt.Printf("%s No targets found in %s\n", color.FgRed.Text("[!]"), source[i])
 		}
 
-		m.Excludes = checkConflict(source[i], m.Includes, m.Excludes)
-		m.Includes = checkAvoid(source[i], m.Includes, serviceAvoids)
+		m.Excludes = checkConflict(source[i], m.Includes, m.Excludes, resolveConflicts)
 	}
 	return m
 }
@@ -262,7 +261,7 @@ func checkAvoid(source string, includes [][]string, services []string) [][]strin
 
 // checkConflict attempts to identify conflicting includes/excludes
 // returns a modified list of excludes depending on user input
-func checkConflict(source string, includes, excludes [][]string) [][]string {
+func checkConflict(source string, includes, excludes [][]string, resolveConflicts bool) [][]string {
 	found := false
 	var targetConflicts [][]string
 
@@ -270,11 +269,11 @@ func checkConflict(source string, includes, excludes [][]string) [][]string {
 		if !isIP(include[0]) {
 			for _, exclude := range excludes {
 				if exclude[4] == include[4] && exclude[3] == "*." {
-					if !found {
+					if !found && !resolveConflicts {
 						fmt.Printf("\n%s Encountered scope conflict in %s", color.FgYellow.Text("[!]"), color.FgYellow.Text(source))
 						fmt.Printf("\n%s\n", color.FgGray.Text("    This prevents target in green from being targeted unless exclude in red is removed"))
 						found = true
-					} else {
+					} else if !resolveConflicts {
 						fmt.Printf("\n%s %s excludes %s", color.FgDefault.Text("   "), color.FgRed.Text(exclude[0]), color.FgGreen.Text(include[0]))
 						targetConflicts = append(targetConflicts, include)
 					}
@@ -284,7 +283,13 @@ func checkConflict(source string, includes, excludes [][]string) [][]string {
 	}
 
 	if found == true {
+		var answer string
+		if !resolveConflicts {
 		answer := getAnswer("Remove now?")
+			_ = answer
+		} else {
+			answer = "Y"
+		}
 		if answer == "Y" || answer == "" {
 			excludes = remove(targetConflicts, excludes)
 		}
