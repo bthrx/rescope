@@ -23,7 +23,7 @@ var include, exclude, scope []string
 func Scrape(url string) string {
 	re := regexp.MustCompile(`([\w-]+)\/([\w-]+$)`)
 	match := re.FindStringSubmatch(url)
-	program := match[2]
+	program := strings.ToLower(match[2])
 
 	// GET program ID
 	resp, status := req.GET("https://one.federacy.com/api/programs/" + program)

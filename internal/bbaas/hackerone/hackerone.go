@@ -24,7 +24,7 @@ var isAssetURL bool
 func Scrape(url string) string {
 	re := regexp.MustCompile(`([\w-]+)\/([\w-]+$)`)
 	match := re.FindStringSubmatch(url)
-	program := match[2]
+	program := strings.ToLower(match[2])
 	endpoint := "https://hackerone.com/graphql?"
 
 	// clear global slice

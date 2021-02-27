@@ -24,8 +24,8 @@ var s string
 func Scrape(url string) string {
 	re := regexp.MustCompile(`([\w-]+)\/([\w-]+)\/([\w-]+$)`)
 	match := re.FindStringSubmatch(url)
-	business := match[1]
-	program := match[2]
+	business := strings.ToLower(match[1])
+	program := strings.ToLower(match[2])
 	endpoint := "https://app.intigriti.com/programs/" + business + "/" + program + "/" + "detail"
 
 	// GET request to endpoint
