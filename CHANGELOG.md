@@ -10,9 +10,11 @@ Unreleased changes will go in the below heading.
 - Parsing from Bugcrowd should now work with new site layout
 - Fixed out of bounds error when removing third party resources from scope
 - [#8](https://github.com/root4loot/rescope/issues/5) Fixed segfault when parsing scopes from intigriti due to layout change. Ref a26631c
+- Fixed bug that caused misaligned lists when HackerOne was included to multi-scopes.
 
 ### Improvements
 - Migrated vendoring to Go Modules
+- HackerOne scopes will now include IP/CIDR in addition to URLs.
 
 ## [2.1] - 2019-11-19
 
