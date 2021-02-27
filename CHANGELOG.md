@@ -12,6 +12,7 @@ Unreleased changes will go in the below heading.
 - [#8](https://github.com/root4loot/rescope/issues/5) Fixed segfault when parsing scopes from intigriti due to layout change. Ref a26631c
 - Fixed bug that caused misaligned lists when HackerOne was included to multi-scopes.
 - rescope will no longer throw exceptions when program names are upper-cased.
+- Fixed segfault when parsing scopes from openbugbounty.org caused by changes to program URL structure.
 
 ### Improvements
 - Migrated vendoring to Go Modules

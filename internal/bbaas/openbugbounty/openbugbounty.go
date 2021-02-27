@@ -19,9 +19,9 @@ import (
 
 // Scrape tries to grab scope table for a given program on openbugbounty.com
 func Scrape(url string) string {
-	re := regexp.MustCompile(`([\w-]+)\/([\w-]+$)`)
+	re := regexp.MustCompile(`([\w_]+)\/?$`)
 	match := re.FindStringSubmatch(url)
-	program := match[2]
+	program := match[1]
 	endpoint := "https://www.openbugbounty.org/bugbounty/" + program
 	var scope []string
 
