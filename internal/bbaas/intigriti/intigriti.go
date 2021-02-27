@@ -18,7 +18,6 @@ import (
 )
 
 var scope []string
-var s string
 
 // Scrape tries to grab scope table for a given program on intigriti.com
 func Scrape(url string) string {
@@ -38,15 +37,14 @@ func Scrape(url string) string {
 
 	// parse response body to xQuery doc
 	doc, _ := htmlquery.Parse(strings.NewReader(resp))
+	blob := htmlquery.Find(doc, "//div[@class='domains']//p ")
 
-	// xQuery to grab in-scope and out-of-scope tables
-	blob := htmlquery.Find(doc, "//div[@class='domains']")
-
+	var s string
 	for _, t := range blob {
-		s = s + htmlquery.InnerText(t)
+		s = s + " " + htmlquery.InnerText(t)
 	}
 
-	s = strings.Replace(s, "\n", " ", -1)
+	//s = strings.Replace(s, "\n", " ", -1)
 	re1 := regexp.MustCompile(`(.*)`)
 	re2 := regexp.MustCompile(`(Out of Scope(.*))`)
 
