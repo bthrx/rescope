@@ -8,12 +8,16 @@
 package hackerone
 
 import (
+	"bytes"
+	"io/ioutil"
+	"net/http"
+	"os"
 	"reflect"
 	"regexp"
 	"strings"
 	"unsafe"
 
-	req "github.com/root4loot/rescope/internal/bbaas/pkg/request"
+	doerror "github.com/root4loot/rescope/internal/bbaas/pkg/errors"
 )
 
 var scope []string
@@ -36,7 +40,7 @@ func Scrape(url string) string {
 		}
 	 }`)
 
-	resB, _ := (req.POST(endpoint, data))
+	resB, _ := (Post(endpoint, data))
 	resS := BytesToString(resB)
 
 	re = regexp.MustCompile(`\"edges":\[(.*?)\]`)
@@ -64,4 +68,32 @@ func BytesToString(b []byte) string {
 	bh := (*reflect.SliceHeader)(unsafe.Pointer(&b))
 	sh := reflect.StringHeader{bh.Data, bh.Len}
 	return *(*string)(unsafe.Pointer(&sh))
+}
+
+// Post makes a post request with custom X-Auth-Token header
+func Post(url string, data []byte) ([]byte, int) {
+
+	// HackerOne X-Auth-Token
+	token := os.Getenv("h1token")
+
+	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(data))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Connection", "close")
+	req.Header.Set("X-Auth-Token", token)
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	respS := resp.StatusCode
+
+	// check response
+	if err != nil {
+		doerror.NoResponse(url)
+	}
+
+	// close response
+	defer resp.Body.Close()
+
+	// JSON response body
+	respB, _ := ioutil.ReadAll(resp.Body)
+
+	return respB, respS
 }
