@@ -104,6 +104,7 @@ func Parse(m Match, scopes, source []string, silent bool, incTag, exTag string, 
 			// Single IP
 			if m4 != nil {
 				m.Counter++
+				printFound(m4[0], exclude, silent)
 				if exclude != true {
 					m.Includes = append(m.Includes, m4)
 				} else {
@@ -123,6 +124,7 @@ func Parse(m Match, scopes, source []string, silent bool, incTag, exTag string, 
 						log.Fatalf("\n%s Failed to parse IP/CIDR: %s", color.FgRed.Text("[!]"), arr)
 					} else {
 						m.Counter++
+						printFound(arr, exclude, silent)
 					}
 					if exclude != true {
 						m.Includes = append(m.Includes, hosts)
@@ -144,6 +146,7 @@ func Parse(m Match, scopes, source []string, silent bool, incTag, exTag string, 
 						log.Fatalf("\n%s Failed to parse IP-range: %s", color.FgRed.Text("[!]"), arr[0])
 					} else {
 						m.Counter++
+						printFound(arr[0], exclude, silent)
 						if exclude != true {
 							m.Includes = append(m.Includes, hosts)
 						} else {
@@ -161,6 +164,7 @@ func Parse(m Match, scopes, source []string, silent bool, incTag, exTag string, 
 						continue
 					}
 					m.Counter++
+					printFound(arr[0], exclude, silent)
 					if exclude != true {
 						m.Includes = append(m.Includes, arr)
 					} else {
@@ -174,26 +178,22 @@ func Parse(m Match, scopes, source []string, silent bool, incTag, exTag string, 
 		} else if m.Counter == 0 && !bbaas {
 			fmt.Printf("%s No targets found in %s\n", color.FgRed.Text("[!]"), source[i])
 		}
-	}
 
-	for i := range scopes {
-		m.Includes = removeDuplicates(m.Includes)
-		m.Excludes = removeDuplicates(m.Excludes)
-		printFound(m.Includes, m.Excludes, silent)
-		m.Includes = checkAvoid(source[i], m.Includes, serviceAvoids)
 		m.Excludes = checkConflict(source[i], m.Includes, m.Excludes)
+		m.Includes = checkAvoid(source[i], m.Includes, serviceAvoids)
 	}
 	return m
 }
 
-func printFound(includes, excludes [][]string, silent bool) {
-	if !silent {
-		for _, include := range includes {
-			fmt.Println(color.FgGreen.Text(" +  " + include[0]))
+// prints item in color depending on whether it is part of include or exclude
+func printFound(item string, exclude bool, silent bool) {
+	if exclude == true {
+		if !silent {
+			fmt.Println(color.FgRed.Text(" -  " + item))
 		}
-
-		for _, exclude := range excludes {
-			fmt.Println(color.FgRed.Text(" -  " + exclude[0]))
+	} else {
+		if !silent {
+			fmt.Println(color.FgGreen.Text(" +  " + item))
 		}
 	}
 }
