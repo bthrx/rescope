@@ -8,7 +8,6 @@
 package hackerone
 
 import (
-	"fmt"
 	"reflect"
 	"regexp"
 	"strings"
@@ -56,8 +55,6 @@ func Scrape(url string) string {
 	for _, m := range outScope {
 		scope = append(scope, m[2])
 	}
-
-	fmt.Println(scope)
 
 	return strings.Join(scope, "\n")
 }
