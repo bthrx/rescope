@@ -67,8 +67,8 @@ Documentation:
 	a := Args{}
 	b := parser.Flag("b", "burp", &argparse.Options{Help: "Parse to Burp Suite JSON (required)"})
 	z := parser.Flag("z", "zap", &argparse.Options{Help: "Parse to OWASP ZAP XML (required)"})
-	u := parser.List("u", "url", &argparse.Options{Help: "Public bug bounty program URL (required)\n\t\t URL can be set multiple times"})
-	i := parser.List("i", "infile", &argparse.Options{Help: "File (scope) to be parsed (required)\n\t\t Infile can be set multiple times"})
+	u := parser.List("u", "url", &argparse.Options{Help: "Public bug bounty program URL (required)\n\t\t\t  URL can be set multiple times"})
+	i := parser.List("i", "infile", &argparse.Options{Help: "File (scope) to be parsed (required)\n\t\t\t  Infile can be set multiple times"})
 	o := parser.String("o", "outfile", &argparse.Options{Help: "File to write parsed results (required)"})
 	n := parser.String("n", "name", &argparse.Options{Help: "Name of ZAP context (optional)"})
 	ex := parser.String("", "itag", &argparse.Options{Help: "Custom include tag (default: !INCLUDE)"})
