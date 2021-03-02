@@ -18,6 +18,7 @@ import (
 	"unsafe"
 
 	doerror "github.com/root4loot/rescope/internal/bbaas/pkg/errors"
+	"github.com/root4loot/rescope/internal/bbaas/pkg/request"
 )
 
 var scope []string
@@ -39,6 +40,12 @@ func Scrape(url string) string {
 		   "first_0":1337
 		}
 	 }`)
+
+	// GET to check if program is reachable
+	_, responseCode := (request.GET(url))
+	if responseCode != 200 {
+		doerror.NoScope(url)
+	}
 
 	resB, _ := (Post(endpoint, data))
 	resS := BytesToString(resB)
