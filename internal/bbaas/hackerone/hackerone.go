@@ -81,7 +81,7 @@ func BytesToString(b []byte) string {
 func Post(url string, data []byte) ([]byte, int) {
 
 	// HackerOne X-Auth-Token
-	token := os.Getenv("h1token")
+	token := os.Getenv("H1_TOKEN")
 
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
